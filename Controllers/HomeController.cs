@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using TrackNWork.Helpers;
+using TrackNWork.Models;
 
 namespace TrackNWork.Controllers
 {
@@ -10,21 +12,83 @@ namespace TrackNWork.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            var token = GetTokenFromCookie();
+
+            if (token == null)
+                return RedirectToAction("Login", "Authentication");
+
+            try
+            {
+                //var user = SupabaseAuthHelper.ValidateToken(token);
+
+                var principal = SupabaseAuthHelper.ValidateToken(token);
+                var userInfo = SupabaseUserInfo.FromClaimsPrincipal(principal);
+
+                ViewBag.Email = userInfo.Email;
+                ViewBag.BauhofId = userInfo.BauhofId;
+                ViewBag.Role = userInfo.Role;
+                ViewBag.DisplayName = userInfo.DisplayName;
+                return View();
+            }
+            catch
+            {
+                return RedirectToAction("Login", "Authentication");
+            }
         }
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            var token = GetTokenFromCookie();
 
-            return View();
+            if (token == null)
+                return RedirectToAction("Login", "Authentication");
+
+            try
+            {
+                var user = SupabaseAuthHelper.ValidateToken(token);
+
+                var email = user.FindFirst("email")?.Value;
+                var bauhofId = user.FindFirst("user_metadata.bauhof_id")?.Value;
+
+                ViewBag.BauhofId = bauhofId;
+                ViewBag.Email = email;
+
+                return View();
+            }
+            catch
+            {
+                return RedirectToAction("Login", "Authentication");
+            }
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            var token = GetTokenFromCookie();
 
-            return View();
+            if (token == null)
+                return RedirectToAction("Login", "Authentication");
+
+            try
+            {
+                var user = SupabaseAuthHelper.ValidateToken(token);
+
+                var email = user.FindFirst("email")?.Value;
+                var bauhofId = user.FindFirst("user_metadata.bauhof_id")?.Value;
+
+                ViewBag.BauhofId = bauhofId;
+                ViewBag.Email = email;
+
+                return View();
+            }
+            catch
+            {
+                return RedirectToAction("Login", "Authentication");
+            }
+        }
+        private string GetTokenFromCookie()
+        {
+            var cookie = Request.Cookies["supabase_token"];
+            return cookie?.Value;
         }
     }
 }

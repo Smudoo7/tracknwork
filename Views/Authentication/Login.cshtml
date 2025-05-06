@@ -1,0 +1,161 @@
+﻿@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    body {
+        background: linear-gradient(145deg, #f0f2f5, #ffffff);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        margin: 0;
+    }
+
+    .login-wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .login-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px 30px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.5s ease-out;
+    }
+
+        .login-card h2 {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+    .form-group {
+        width: 100%;
+    }
+
+        .form-group label {
+            font-weight: 500;
+        }
+
+    .form-control {
+        max-width: 420px;
+        width: 100%; /* ← Diese Zeile sicherstellen */
+        border-radius: 12px;
+        padding: 12px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        transition: all 0.3s ease;
+        box-sizing: border-box; /* wichtig für Padding */
+    }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+            border-color: #007bff;
+        }
+
+    .btn-modern {
+        width: 100%;
+        background-color: #1c1c1e;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 14px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-modern:hover {
+            background-color: #000;
+        }
+
+    .login-logo {
+        width: 220px;
+        margin: 0 auto 16px;
+        display: block;
+        opacity: 0.9;
+    }
+
+    #error {
+        margin-top: 16px;
+        text-align: center;
+        color: #dc3545;
+        font-weight: 500;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="login-wrapper">
+    <div class="login-card">
+        <img src="~/Images/TracknWork_Logo.png" alt="Logo" class="login-logo" />
+        <div class="form-group mt-4">
+            <label for="username">Benutzername</label>
+            <input type="text" class="form-control" id="username" placeholder="z. B. max" required>
+        </div>
+
+        <div class="form-group mt-3">
+            <label for="bauhofId">Bauhof-ID</label>
+            <input type="text" class="form-control text-uppercase" id="bauhofId" maxlength="4" placeholder="z. B. 1A2F" required>
+        </div>
+
+        <div class="form-group mt-3">
+            <label for="password">Passwort</label>
+            <input type="password" class="form-control" id="password" placeholder="••••••••" required>
+        </div>
+
+        <button onclick="login()" class="btn-modern mt-4">Anmelden</button>
+
+        <div id="error"></div>
+    </div>
+</div>
+
+
+
+<!-- Supabase SDK laden -->
+<script src="~/Scripts/supabase-js.js"></script>
+<script>
+    debugger;
+    const supabaseClient = window.supabase.createClient(
+        'https://hhnzduydbzxuyusuujfc.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhobnpkdXlkYnp4dXl1c3V1amZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0NzU5NDUsImV4cCI6MjA2MjA1MTk0NX0.B0uuDyUwYnkageuYM6dvOLwvx_lobQ04V_c-FGLwO5E'
+    );
+
+    async function login() {
+        const username = document.getElementById('username').value.trim().toLowerCase();
+        const bauhofId = document.getElementById('bauhofId').value.trim().toUpperCase();
+        const password = document.getElementById('password').value;
+
+        // E-Mail aus den Feldern zusammenbauen
+        const email = `${username}@@${bauhofId}.tracknwork.de`;
+        debugger;
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+        });
+
+        if (error) {
+            document.getElementById('error').textContent = "Login fehlgeschlagen: " + error.message;
+        } else {
+            document.cookie = "supabase_token=" + data.session.access_token + "; path=/";
+            window.location.href = '/Home/Index';
+        }
+    };
+
+</script>
