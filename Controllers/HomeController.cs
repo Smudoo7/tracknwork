@@ -12,11 +12,26 @@ namespace TrackNWork.Controllers
     {
         public ActionResult Index()
         {
-            var token = GetTokenFromCookie();
+            string token = Request.Cookies["supabase_token"]?.Value;
+
+            if (string.IsNullOrEmpty(token))
+            {
+                System.IO.File.AppendAllText(Server.MapPath("~/App_Data/token-log.txt"), $"{DateTime.Now}: Kein Token im HomeController\n");
+                return RedirectToAction("Login", "Authentication");
+            }
+            else
+            {
+                System.IO.File.AppendAllText(Server.MapPath("~/App_Data/token-log.txt"), $"{DateTime.Now}: Token empfangen im HomeController: {token}\n");
+            }
 
             if (token == null)
-                return RedirectToAction("Login", "Authentication");
+            {
+                System.IO.File.AppendAllText(Server.MapPath("~/App_Data/token-log.txt"), $"{DateTime.Now}: Token ist null: \n" + token);
 
+                return RedirectToAction("Login", "Authentication");
+            }
+               
+               
             try
             {
                 //var user = SupabaseAuthHelper.ValidateToken(token);
@@ -30,60 +45,65 @@ namespace TrackNWork.Controllers
                 ViewBag.DisplayName = userInfo.DisplayName;
                 return View();
             }
-            catch
+            catch (Exception ex)
             {
+                System.IO.File.AppendAllText(Server.MapPath("~/App_Data/token-log.txt"), $"{DateTime.Now}: Fehler bei der Validierung: \n" + ex.Message);
                 return RedirectToAction("Login", "Authentication");
             }
         }
 
         public ActionResult About()
         {
-            var token = GetTokenFromCookie();
+            //var token = GetTokenFromCookie();
 
-            if (token == null)
-                return RedirectToAction("Login", "Authentication");
+            //if (token == null)
+            //    return RedirectToAction("Login", "Authentication");
 
-            try
-            {
-                var user = SupabaseAuthHelper.ValidateToken(token);
+            //try
+            //{
+            //    //var user = SupabaseAuthHelper.ValidateToken(token);
 
-                var email = user.FindFirst("email")?.Value;
-                var bauhofId = user.FindFirst("user_metadata.bauhof_id")?.Value;
+            //    var principal = SupabaseAuthHelper.ValidateToken(token);
+            //    var userInfo = SupabaseUserInfo.FromClaimsPrincipal(principal);
 
-                ViewBag.BauhofId = bauhofId;
-                ViewBag.Email = email;
-
-                return View();
-            }
-            catch
-            {
-                return RedirectToAction("Login", "Authentication");
-            }
+            //    ViewBag.Email = userInfo.Email;
+            //    ViewBag.BauhofId = userInfo.BauhofId;
+            //    ViewBag.Role = userInfo.Role;
+            //    ViewBag.DisplayName = userInfo.DisplayName;
+            //    return View();
+            //}
+            //catch
+            //{
+            //    return RedirectToAction("Login", "Authentication");
+            //}
+            return View();
         }
 
         public ActionResult Contact()
         {
-            var token = GetTokenFromCookie();
+            //var token = GetTokenFromCookie();
 
-            if (token == null)
-                return RedirectToAction("Login", "Authentication");
+            //if (token == null)
+            //    return RedirectToAction("Login", "Authentication");
 
-            try
-            {
-                var user = SupabaseAuthHelper.ValidateToken(token);
+            //try
+            //{
+            //    //var user = SupabaseAuthHelper.ValidateToken(token);
 
-                var email = user.FindFirst("email")?.Value;
-                var bauhofId = user.FindFirst("user_metadata.bauhof_id")?.Value;
+            //    var principal = SupabaseAuthHelper.ValidateToken(token);
+            //    var userInfo = SupabaseUserInfo.FromClaimsPrincipal(principal);
 
-                ViewBag.BauhofId = bauhofId;
-                ViewBag.Email = email;
-
-                return View();
-            }
-            catch
-            {
-                return RedirectToAction("Login", "Authentication");
-            }
+            //    ViewBag.Email = userInfo.Email;
+            //    ViewBag.BauhofId = userInfo.BauhofId;
+            //    ViewBag.Role = userInfo.Role;
+            //    ViewBag.DisplayName = userInfo.DisplayName;
+            //    return View();
+            //}
+            //catch
+            //{
+            //    return RedirectToAction("Login", "Authentication");
+            //}
+            return View();
         }
         private string GetTokenFromCookie()
         {

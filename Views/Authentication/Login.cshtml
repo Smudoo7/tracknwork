@@ -100,7 +100,37 @@
             transform: translateY(0);
         }
     }
+
+    @@media (max-width: 480px) {
+    .login-card {
+        padding: 24px 20px;
+        border-radius: 0;
+        box-shadow: none;
+        min-height: 100vh;
+        justify-content: center;
+    }
+
+    .login-logo {
+        width: 160px;
+    }
+
+    .btn-modern {
+        font-size: 1rem;
+        padding: 12px;
+    }
+
+    .form-control {
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    .login-wrapper {
+        padding: 1rem;
+    }
+}
 </style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <div class="login-wrapper">
     <div class="login-card">
@@ -120,7 +150,7 @@
             <input type="password" class="form-control" id="password" placeholder="••••••••" required>
         </div>
 
-        <button onclick="login()" class="btn-modern mt-4">Anmelden</button>
+        <button onclick="login()" class="btn-modern mt-4" id="loginBtn">Anmelden</button>
 
         <div id="error"></div>
     </div>
@@ -138,6 +168,9 @@
     );
 
     async function login() {
+        document.getElementById('loginBtn').disabled = true;
+        document.getElementById('loginBtn').textContent = 'Bitte warten...';
+
         const username = document.getElementById('username').value.trim().toLowerCase();
         const bauhofId = document.getElementById('bauhofId').value.trim().toUpperCase();
         const password = document.getElementById('password').value;
@@ -153,8 +186,27 @@
         if (error) {
             document.getElementById('error').textContent = "Login fehlgeschlagen: " + error.message;
         } else {
-            document.cookie = "supabase_token=" + data.session.access_token + "; path=/";
-            window.location.href = '/Home/Index';
+            //document.cookie = "supabase_token=" + data.session.access_token + "; path=/";
+            fetch('/Authentication/SetToken', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    token: data.session.access_token
+                })
+            })
+                .then(async response => {
+                    if (response.ok) {
+                        window.location.href = '/Home/Index';
+                    } else {
+                        const errorText = await response.text();
+                        alert('❌ Token konnte nicht gespeichert werden:\n' + errorText);
+                    }
+                })
+                .catch(err => {
+                    alert('❌ Serverfehler beim Token-Setzen:\n' + err.message);
+                });
         }
     };
 
