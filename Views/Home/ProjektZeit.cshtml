@@ -1,0 +1,39 @@
+﻿@using TrackNWork.Models
+@{
+    ViewBag.Title = "Tagesübersicht";
+    var supaUser = Session["UserInfo"] as SupabaseUserInfo;
+    var userId = supaUser.UserId;
+    var datum = DateTime.Today.ToString("yyyy-MM-dd");
+    
+}
+
+<!-- Include Syncfusion Scripts -->
+<link href="https://cdn.syncfusion.com/20.4.0.44/js/web/flat-azure/ej.web.all.min.css" rel="stylesheet" />
+<script src="https://cdn.syncfusion.com/20.4.0.44/js/web/ej.web.all.min.js"></script>
+
+<div id="ZeiteintragGrid"></div>
+
+<script>
+    $(function () {
+        $("#ZeiteintragGrid").ejGrid({
+            dataSource: ej.DataManager({
+                url: "GetTagesuebersicht?userId=@userId&datum=@datum",
+                adaptor: new ej.UrlAdaptor(),
+                ajaxSettings: {
+                    read: {
+                        type: "GET" //
+                    }
+                }            
+
+            }),
+            columns: [
+                { field: "datum", headerText: "Datum", width: 120 },
+                { field: "dauer_min", headerText: "Dauer (Min)", width: 100 },
+                { field: "stelle", headerText: "HA-Stelle", width: 200 },
+                { field: "ha_nummer", headerText: "HA-Nr", width: 100 },
+                { field: "geraete", headerText: "Geräte", width: 250 },
+                { field: "fahrzeuge", headerText: "Fahrzeuge", width: 200 }
+            ]
+        });
+    });   
+</script>

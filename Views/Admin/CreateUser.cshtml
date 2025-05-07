@@ -1,0 +1,135 @@
+﻿@model TrackNWork.Models.SupabaseUserInfo
+@{ Layout = null; }
+
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+    .form-container {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        max-width: 500px;
+        margin: 2rem auto;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        color: #1d1d1f;
+    }
+
+    label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #3c3c43;
+    }
+
+        label svg {
+            width: 18px;
+            height: 18px;
+            margin-right: 0.5rem;
+            stroke-width: 1.5px;
+            stroke: #0071e3;
+        }
+
+    input, select {
+        width: 100%;
+        padding: 0.7rem;
+        margin-bottom: 1.2rem;
+        border: 1px solid #ccc;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+    }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #0071e3;
+        }
+
+    button {
+        width: 100%;
+        padding: 0.9rem;
+        font-size: 1rem;
+        background: #0071e3;
+        color: white;
+        border: none;
+        border-radius: 14px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.2s;
+    }
+
+        button:hover {
+            background: #005bb5;
+        }
+
+    .message {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .success {
+        background: #e6f4ea;
+        color: #0f5132;
+    }
+
+    .error {
+        background: #f8d7da;
+        color: #842029;
+    }
+</style>
+
+<div class="form-container">
+    <h2>Benutzer anlegen</h2>
+
+    @if (ViewBag.Success != null)
+    {
+        <div class="message success">@ViewBag.Success</div>
+    }
+    @if (ViewBag.Error != null)
+    {
+        <div class="message error">@ViewBag.Error</div>
+    }
+
+    @using (Html.BeginForm("CreateUser", "Admin", FormMethod.Post, new { id = "userForm" }))
+    {
+        <label for="Username"><i data-lucide="user"></i> Benutzername</label>
+        @Html.TextBoxFor(m => m.Username, new { autocomplete = "off" })
+
+        <label for="BauhofId"><i data-lucide="tag"></i> Bauhof-ID</label>
+        @Html.TextBoxFor(m => m.BauhofId)
+
+        <label for="Password"><i data-lucide="lock"></i> Passwort</label>
+        <input type="password" name="Password" class="form-control" />
+
+        <label for="DisplayName"><i data-lucide="smile"></i> Anzeigename</label>
+        @Html.TextBoxFor(m => m.DisplayName)
+
+        <label for="Role"><i data-lucide="users"></i> Rolle</label>
+        @Html.DropDownListFor(m => m.Role, new SelectList(new[] { "user", "admin" }))
+
+        <button type="submit"><i data-lucide="plus"></i> Benutzer erstellen</button>
+    }
+</div>
+
+@if (ViewBag.Success != null)
+{
+    <script>
+        document.getElementById("userForm").reset();
+    </script>
+}
+
+<!-- Initialisierung der Lucide Icons -->
+<script>
+    lucide.createIcons();
+</script>

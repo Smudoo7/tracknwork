@@ -1,9 +1,21 @@
-@model System.Web.Mvc.HandleErrorInfo
-
-@{
-    ViewBag.Title = "Error";
+﻿@{
+    ViewBag.Title = "Fehler";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<div style="text-align: center; padding: 4rem 2rem;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">🥴 Uups, da ist etwas schiefgelaufen.</h1>
+    <p style="font-size: 1.1rem; color: #555;">Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es später erneut.</p>
+    <p style="margin-top: 2rem;">
+        <a href="/Home/Index" style="color: #0071e3; text-decoration: none; font-weight: 500;">
+            <i data-lucide="arrow-left" style="vertical-align: middle; margin-right: 4px;"></i>
+            Zur Startseite
+        </a>
+    </p>
+</div>
 
+@section scripts {
+    <script>
+        lucide.createIcons();
+    </script>
+}

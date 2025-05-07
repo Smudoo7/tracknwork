@@ -1,75 +1,225 @@
+@using TrackNWork.Models
+@{
+    var supaUser = Session["UserInfo"] as SupabaseUserInfo;
+    Layout = null;
+}
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewBag.Title - TrackNWork</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/Scripts/jquery-3.7.1.js")
 
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/ej2/fluent.css")
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            position: relative;
+        }
+
+        .nav-left img {
+            height: 36px;
+        }
+
+        .burger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 1.5rem;
+        }
+
+        .nav-menu li a {
+            color: #1d1d1f;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-menu li a:hover {
+            color: #0071e3;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .user-name {
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .user-name i {
+            margin-right: 6px;
+        }
+
+        .logout-link {
+            text-decoration: none;
+            color: #0071e3;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            transition: color 0.2s ease;
+        }
+
+        .logout-link:hover {
+            color: #005bb5;
+        }
+
+        .body-content {
+            padding: 2rem;
+            min-height: calc(100vh - 140px);
+        }
+
+        footer {
+            background-color: #f5f5f7;
+            text-align: center;
+            padding: 1rem 0;
+            font-size: 0.9rem;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+
+        @@media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                background: white;
+                position: absolute;
+                top: 64px;
+                left: 0;
+                width: 100%;
+                padding: 1rem;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+                z-index: 20;
+            }
+
+            .nav-menu.open {
+                display: flex;
+            }
+
+            .burger {
+                display: block;
+            }
+
+            .nav-right {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+
+    @Scripts.Render("~/Scripts/jquery-3.7.1.js")
     @Scripts.Render("~/Scripts/ej2/ej2.min.js")
 </head>
 <body>
-    <div class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="/home/index">
-            <img src="/Images/TracknWork_Logo.png" alt="Track’n’Work Logo" height="40">
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/home/index">&Uuml;bersicht<span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/home/about">Projektzeit erfassen</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/home/contact">Admin</a>
-                </li>
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/home/index">
+                <img src="/Images/TracknWork_Logo.png" alt="Track’n’Work Logo">
+            </a>
+            <button class="burger" onclick="toggleNav()" aria-label="Menü umschalten">
+                <i data-lucide="menu"></i>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="/home/index" onclick="closeNav()">Übersicht</a></li>
+                <li><a href="/home/projektzeit" onclick="closeNav()">Projektzeit erfassen</a></li>
+                <li><a href="/Admin/Dashboard" onclick="closeNav()">Admin</a></li>
             </ul>
-            @*<form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                </form>*@
         </div>
-    </div>
-    <div class="container body-content">
+
+        @if (supaUser != null)
+        {
+            <div class="nav-right">
+                <span class="user-name">
+                    <i data-lucide="user"></i> @supaUser.DisplayName
+                </span>
+                <a href="/Authentication/Logout" class="logout-link">
+                    <i data-lucide="log-out"></i> Logout
+                </a>
+            </div>
+        }
+    </nav>
+
+    <main class="container body-content">
         @RenderBody()
-    </div>
+    </main>
+
     <footer>
-        <div class="container body-content">
-            <hr />
-            <p>&copy; @DateTime.Now.Year - TrackNWork</p>
-        </div>
+        &copy; @DateTime.Now.Year &bull; Track'n'Work
     </footer>
+
+    <!-- Auth-Check und Burger-Menü -->
     <script>
         function getCookie(name) {
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);
             if (parts.length === 2) return parts.pop().split(';').shift();
         }
+
         const token = getCookie('supabase_token');
-
         const currentPath = window.location.pathname.toLowerCase();
-
         const isLoginPage = currentPath.includes("/authentication/login");
 
         if (!token && !isLoginPage) {
             window.location.href = "/Authentication/Login";
         }
+
+        function toggleNav() {
+            const nav = document.getElementById('navMenu');
+            nav.classList.toggle('open');
+        }
+
+        function closeNav() {
+            const nav = document.getElementById('navMenu');
+            nav.classList.remove('open');
+        }
+
+        lucide.createIcons();
     </script>
-
-
-    @Scripts.Render("~/bundles/jquery")
-
 
     @Html.EJS().ScriptManager()
     @Scripts.Render("~/Scripts/supabase-js.js")
-
     @RenderSection("scripts", required: false)
     @Scripts.Render("~/bundles/bootstrap")
 </body>

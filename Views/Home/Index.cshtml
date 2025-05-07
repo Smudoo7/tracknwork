@@ -1,33 +1,84 @@
-@{
-    ViewBag.Title = "Home Page";
+﻿@{
+    ViewBag.Title = "Übersicht";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+<style>
+    .overview-wrapper {
+        max-width: 800px;
+        margin: 2rem auto;
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+        .overview-wrapper h1 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #1d1d1f;
+        }
+
+        .overview-wrapper ul {
+            padding-left: 1.4rem;
+        }
+
+    .readme-container {
+        margin-top: 3rem;
+        border-top: 1px solid #ddd;
+        padding-top: 2rem;
+    }
+
+        .readme-container h2 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+    .readme-content {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #333;
+    }
+</style>
+
+<div class="overview-wrapper">
+    <h1>Projektübersicht – TrackNWork</h1>
+
+    <p>Willkommen! Hier findest du eine aktuelle Übersicht über den Projektstand der Applikation:</p>
+
+    <ul>
+        <li><strong>✔</strong> Supabase Authentifizierung mit Session-Handling</li>
+        <li><strong>✔</strong> Benutzerverwaltung mit Rollen</li>
+        <li><strong>✔</strong> Admin-Dashboard mit Syncfusion Tabs</li>
+        <li><strong>✔</strong> Gerät-/Fahrzeug-/Haushaltsstellenstruktur</li>
+        <li><strong>⚙</strong> Benutzeranlage mit Anzeige und Validierung</li>
+        <li><strong>📦</strong> API-Anbindung (z. B. Supabase) aktiv</li>
+        <li><strong>🧩</strong> Designsystem auf Apple-inspiriertem UI</li>
+    </ul>
+
+    <div class="readme-container">
+        <h2><i data-lucide="book-open-text" style="vertical-align: middle;"></i> Dokumentation (README.md)</h2>
+        <div class="readme-content" id="readmeContent">
+            <p>README wird geladen...</p>
+        </div>
+    </div>
 </div>
 
-     <!--SamplesToBeReplaced-->
+@section scripts {
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
 
-<div class="row">
-    <div class="col-md-12">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
-</div>
+        fetch("https://api.github.com/repos/Smudoo7/tracknwork/readme", {
+            headers: { Accept: "application/vnd.github.v3.html" } // gerendertes HTML
+        })
+            .then(response => response.ok ? response.text() : Promise.reject(response))
+            .then(html => {
+                document.getElementById("readmeContent").innerHTML = html;
+            })
+            .catch(() => {
+                document.getElementById("readmeContent").innerHTML = "<p><em>README konnte nicht geladen werden.</em></p>";
+            });
+    </script>
+}

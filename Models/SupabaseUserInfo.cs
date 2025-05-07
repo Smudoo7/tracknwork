@@ -9,11 +9,13 @@ namespace TrackNWork.Models
 {
     public class SupabaseUserInfo
     {
+        public string Username { get; set; }
         public string Email { get; set; }
         public string DisplayName { get; set; }
         public string BauhofId { get; set; }
         public string Role { get; set; }
         public string UserId { get; set; }
+        public string Password { get; set; }
 
         public static SupabaseUserInfo FromClaimsPrincipal(ClaimsPrincipal user)
         {
@@ -22,7 +24,7 @@ namespace TrackNWork.Models
                 Email = user.FindFirst("email")?.Value
                          ?? user.FindFirst(ClaimTypes.Email)?.Value
                          ?? user.FindFirst("sub")?.Value,
-                UserId = user.FindFirst("sub")?.Value
+                UserId = user.Claims.ToList()[1].Value
             };
 
             var metadata = user.FindFirst("user_metadata")?.Value;
@@ -41,6 +43,8 @@ namespace TrackNWork.Models
 
                     if (json.TryGetProperty("role", out var r))
                         info.Role = r.GetString();
+                    if (json.TryGetProperty("uid", out var uid))
+                        info.UserId = r.GetString();
                 }
                 catch
                 {
